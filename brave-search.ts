@@ -22,6 +22,7 @@ import {
 	formatSize,
 	truncateHead,
 	truncateTail,
+	type TruncationResult,
 	withFileMutationQueue,
 } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
@@ -64,7 +65,7 @@ interface WebSearchDetails {
 	query: string;
 	searchType: string;
 	resultCount: number;
-	truncation?: any;
+	truncation?: TruncationResult;
 	fullOutputPath?: string;
 }
 
@@ -156,13 +157,13 @@ async function processOutput(
 const webSearchTool = defineTool({
 	name: "web_search",
 	label: "Web Search",
-	description: "Search the web using Brave Search. Use this tool to find information, documentation, news, images, videos, or get AI-grounded answers. Specify the search type: 'web' for general search (default), 'answers' for AI-grounded Q&A, 'news' for recent articles, 'images' for images, 'videos' for videos, 'context' for RAG content extraction.",
-	promptSnippet: "Search the web for information, documentation, news, images, or videos",
+	description:
+		"Search the web via Brave Search. The 'type' parameter selects the search mode: 'web' (default) general results, 'answers' AI-synthesized Q&A with citations, 'news' recent articles (supports 'freshness'), 'images', 'videos', 'context' RAG content extraction (supports 'max_tokens').",
+	promptSnippet: "Brave web search (web | answers | news | images | videos | context)",
 	promptGuidelines: [
-		"Use web_search when the user asks to search for information, find documentation, look up recent news, or find media",
-		"Specify type='answers' when the user asks a question that requires a synthesized answer with citations",
-		"Specify type='news' with freshness parameter when the user asks about recent events or current topics",
-		"Specify type='context' when you need to extract detailed content from web pages for research or analysis",
+		"Use web_search with type='answers' when the user asks a question that wants a synthesized answer with citations",
+		"Use web_search with type='news' and a freshness filter (pd/pw/pm/py) when the user asks about recent or current events",
+		"Use web_search with type='context' to extract detailed page content for research or analysis",
 	],
 	parameters: WebSearchParams,
 
