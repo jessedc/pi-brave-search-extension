@@ -102,6 +102,12 @@ function executeBxCommand(args: string[], cwd: string): string {
 			if (stderr.includes("rate limit")) {
 				throw new Error("Brave Search API rate limit exceeded. Please wait and try again.");
 			}
+			if (stderr.includes("OPTION_NOT_IN_PLAN") || stderr.includes("not subscribed in the plan")) {
+				const subcommand = args[0];
+				throw new Error(
+					`Brave Search type='${subcommand}' is not included in your current API plan. Upgrade your subscription at https://brave.com/search/api/ to enable this search type, or use a different type (e.g. 'web').`,
+				);
+			}
 			if (err.status === 1 && !stderr.trim()) {
 				return "";
 			}
