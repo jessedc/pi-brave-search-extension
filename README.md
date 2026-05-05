@@ -2,8 +2,6 @@
 
 A Pi coding-agent extension that exposes a single unified `web_search` tool to the LLM, backed by the [Brave Search CLI](https://brave.com/search/api/) (`bx`).
 
-One tool with a `type` parameter (`web` / `answers` / `news` / `images` / `videos` / `context`) instead of six separate tools — fewer choices for the model, less system-prompt overhead.
-
 ## ✨ Features
 
 - **Single tool** (`web_search`) with multiple search types
