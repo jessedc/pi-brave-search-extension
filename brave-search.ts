@@ -73,6 +73,17 @@ interface WebSearchDetails {
 // Helper Functions
 // ============================================================================
 
+let tempDirPromise: Promise<string> | undefined;
+let tempCounter = 0;
+
+async function nextOutputPath(): Promise<string> {
+	if (!tempDirPromise) {
+		tempDirPromise = mkdtemp(join(tmpdir(), "pi-brave-"));
+	}
+	const dir = await tempDirPromise;
+	return join(dir, `output-${++tempCounter}.json`);
+}
+
 function executeBxCommand(args: string[], cwd: string): string {
 	try {
 		return execFileSync("bx", args, {
@@ -129,8 +140,7 @@ async function processOutput(
 	let resultText = truncation.content;
 
 	if (truncation.truncated) {
-		const tempDir = await mkdtemp(join(tmpdir(), "pi-brave-"));
-		const tempFile = join(tempDir, "output.json");
+		const tempFile = await nextOutputPath();
 		await withFileMutationQueue(tempFile, async () => {
 			await writeFile(tempFile, output, "utf8");
 		});
