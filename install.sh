@@ -18,7 +18,7 @@ fi
 echo "✅ Brave Search CLI found: $(which bx)"
 
 # Check API key
-if ! bx config show-key &> /dev/null 2>&1; then
+if ! bx config show-key &> /dev/null; then
     echo ""
     echo "⚠️  API key not configured"
     echo "Run: bx config set-key YOUR_API_KEY"
