@@ -236,7 +236,7 @@ const webSearchTool = defineTool({
 			web: "🔍",
 			answers: "💡",
 			news: "📰",
-			images: "🖼️",
+			images: "📷",
 			videos: "🎥",
 			context: "📄",
 		};
