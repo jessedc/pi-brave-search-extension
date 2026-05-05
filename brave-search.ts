@@ -9,7 +9,7 @@
  *   Or BRAVE_SEARCH_API_KEY environment variable
  */
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -74,8 +74,7 @@ interface WebSearchDetails {
 
 function executeBxCommand(args: string[], cwd: string): string {
 	try {
-		const command = ["bx", ...args].join(" ");
-		return execSync(command, {
+		return execFileSync("bx", args, {
 			cwd,
 			encoding: "utf-8",
 			maxBuffer: 100 * 1024 * 1024,
@@ -269,7 +268,7 @@ export default function (pi: ExtensionAPI) {
 	// Status on session start
 	pi.on("session_start", async (_event, ctx) => {
 		try {
-			execSync("which bx", { stdio: "ignore" });
+			execFileSync("which", ["bx"], { stdio: "ignore" });
 			ctx.ui.setStatus("web-search", "Web search ready");
 		} catch {
 			ctx.ui.setStatus("web-search", "bx CLI not found");
@@ -284,7 +283,7 @@ export default function (pi: ExtensionAPI) {
 	pi.on("tool_call", async (event) => {
 		if (event.toolName === "web_search") {
 			try {
-				execSync("which bx", { stdio: "ignore" });
+				execFileSync("which", ["bx"], { stdio: "ignore" });
 			} catch {
 				return {
 					block: true,
