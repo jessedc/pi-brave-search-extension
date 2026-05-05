@@ -53,10 +53,10 @@ echo ""
 echo "The LLM will see ONE tool: web_search"
 echo ""
 echo "Usage examples:"
-echo '  "Search for TypeScript docs"        → type="web" (default)'
-echo '  "AI news this week"                 → type="news", freshness="pw"'
-echo '  "Find tutorial videos"              → type="videos"'
-echo '  "Extract API documentation"         → type="context"'
+echo '  "Find Express.js API documentation"  → type="context" (default)'
+echo '  "Just give me search result links"   → type="web"'
+echo '  "AI news this week"                  → type="news", freshness="pw"'
+echo '  "Find tutorial videos"               → type="videos"'
 echo ""
 echo "Next steps:"
 echo "  1. Restart Pi or run: /reload"

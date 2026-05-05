@@ -36,10 +36,10 @@ const WebSearchParams = Type.Object({
 		description: "Search query - be specific and descriptive for best results" 
 	}),
 	type: StringEnum(
-		["web", "news", "images", "videos", "context"] as const,
+		["context", "web", "news", "images", "videos"] as const,
 		{
-			description: "Search type: 'web' for general search (default), 'news' for recent articles, 'images' for images, 'videos' for videos, 'context' for RAG content extraction",
-			default: "web"
+			description: "Search type: 'context' for LLM-friendly pre-extracted page content (default), 'web' for raw search result links and snippets, 'news' for recent articles, 'images' for images, 'videos' for videos",
+			default: "context"
 		}
 	),
 	count: Type.Optional(Type.Integer({
@@ -174,18 +174,18 @@ const webSearchTool = defineTool({
 	name: "web_search",
 	label: "Web Search",
 	description:
-		"Search the web via Brave Search. The 'type' parameter selects the search mode: 'web' (default) general results, 'news' recent articles (supports 'freshness'), 'images', 'videos', 'context' RAG content extraction (supports 'max_tokens').",
-	promptSnippet: "Brave web search (web | news | images | videos | context)",
+		"Search the web via Brave Search. The 'type' parameter selects the search mode: 'context' (default) LLM-friendly pre-extracted page content (supports 'max_tokens'), 'web' raw search result links and snippets, 'news' recent articles (supports 'freshness'), 'images', 'videos'.",
+	promptSnippet: "Brave web search (context | web | news | images | videos)",
 	promptGuidelines: [
 		"Use web_search with type='news' and a freshness filter (pd/pw/pm/py) when the user asks about recent or current events",
-		"Use web_search with type='context' to extract detailed page content for research or analysis",
+		"Use web_search with type='web' when you want raw search result links and snippets rather than pre-extracted page content",
 	],
 	parameters: WebSearchParams,
 
 	async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
 		const {
 			query,
-			type = "web",
+			type = "context",
 			count,
 			freshness,
 			max_tokens,
@@ -222,7 +222,7 @@ const webSearchTool = defineTool({
 	},
 
 	renderCall(args, theme) {
-		const typeLabel = args.type !== "web" ? ` (${args.type})` : "";
+		const typeLabel = args.type && args.type !== "context" ? ` (${args.type})` : "";
 		let text = theme.fg("toolTitle", theme.bold(`web_search${typeLabel} `));
 		text += theme.fg("accent", `"${args.query}"`);
 		

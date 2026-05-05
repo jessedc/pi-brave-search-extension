@@ -69,18 +69,18 @@ The LLM sees one tool: `web_search`.
 
 | Type | Use Case | Example |
 |------|----------|---------|
-| `web` (default) | General search | Documentation, resources |
+| `context` (default) | LLM-friendly pre-extracted page content | Documentation, API references |
+| `web` | Raw search result links and snippets | Quick lookups |
 | `news` | Recent articles | "Latest AI news" |
 | `images` | Visual assets | "Architecture diagrams" |
 | `videos` | Video content | "Tutorial videos" |
-| `context` | Content extraction | "Extract API docs" |
 
 ### Parameters
 
 ```typescript
 {
   query: string,           // Required: search query
-  type?: "web" | "news" | "images" | "videos" | "context",
+  type?: "context" | "web" | "news" | "images" | "videos",
   count?: number,          // 1–20, default: 10
   freshness?: "pd"|"pw"|"pm"|"py",  // type=news only
   max_tokens?: number      // 100–32000, type=context only
@@ -93,22 +93,28 @@ The LLM sees one tool: `web_search`.
 
 ### Examples
 
-**General search:**
+**Default (LLM-friendly pre-extracted content):**
 ```
-User: "Find the official React documentation"
-LLM:  web_search({ query: "React documentation" })
+User: "Find the Express.js API documentation"
+LLM:  web_search({ query: "Express.js API documentation" })
+```
+
+**Bounded token budget:**
+```
+User: "Get a short summary of the Express.js API"
+LLM:  web_search({ query: "Express.js API", max_tokens: 8000 })
+```
+
+**Raw search result links:**
+```
+User: "Just give me search results for the React docs"
+LLM:  web_search({ query: "React documentation", type: "web" })
 ```
 
 **Recent news:**
 ```
 User: "What's new in AI this week?"
 LLM:  web_search({ query: "AI developments", type: "news", freshness: "pw" })
-```
-
-**Content extraction for RAG:**
-```
-User: "Extract the Express.js API documentation"
-LLM:  web_search({ query: "Express.js API", type: "context", max_tokens: 8000 })
 ```
 
 **Media:**
