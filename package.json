@@ -1,0 +1,33 @@
+{
+  "name": "pi-brave-search-extension",
+  "version": "1.0.0",
+  "description": "Brave Search web search extension for Pi coding agent",
+  "main": "brave-search.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pi",
+    "extension",
+    "brave-search",
+    "web-search",
+    "coding-agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
+    "typebox": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./brave-search.ts"
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
