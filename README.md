@@ -224,27 +224,6 @@ pi
 
 ## 🚀 Advanced Usage
 
-### Pagination
-
-For large result sets, use offset (not directly exposed, but LLM can make multiple calls):
-
-```
-First page: web_search({ query: "...", count: 20 })
-Second page: web_search({ query: "...", count: 20 }) // LLM refines query
-```
-
-### Content Extraction Rules
-
-The `context` type supports CSS selectors for targeted extraction (via bx `--extract-rules`):
-
-```
-web_search({ 
-  query: "React hooks documentation",
-  type: "context",
-  // Note: extract_rules not yet exposed in schema, coming soon
-})
-```
-
 ### Combining Search Types
 
 For comprehensive research, the LLM can make multiple calls:
