@@ -42,10 +42,10 @@ const WebSearchParams = Type.Object({
 			default: "web"
 		}
 	),
-	count: Type.Optional(Type.Integer({ 
-		description: "Number of results (1-20, default: 10)", 
-		minimum: 1, 
-		maximum: 20 
+	count: Type.Optional(Type.Integer({
+		description: "Number of results (1-20, default: 10, not supported with type='answers')",
+		minimum: 1,
+		maximum: 20
 	})),
 	freshness: Type.Optional(StringEnum(["pd", "pw", "pm", "py"] as const, {
 		description: "Time filter for news: pd=past day, pw=past week, pm=past month, py=past year (only used with type=news)",
@@ -187,7 +187,7 @@ const webSearchTool = defineTool({
 		const {
 			query,
 			type = "web",
-			count = 10,
+			count,
 			freshness,
 			max_tokens,
 		} = params;
@@ -202,8 +202,17 @@ const webSearchTool = defineTool({
 				`'max_tokens' is only valid with type='context', not type='${type}'. Drop the max_tokens parameter or set type='context'.`,
 			);
 		}
+		if (count !== undefined && type === "answers") {
+			throw new Error(
+				`'count' is not supported with type='answers'. Drop the count parameter or use a different type.`,
+			);
+		}
 
-		const args: string[] = [type, query, "--count", count.toString()];
+		const args: string[] = [type, query];
+
+		if (type !== "answers") {
+			args.push("--count", (count ?? 10).toString());
+		}
 
 		if (freshness) {
 			args.push("--freshness", freshness);
@@ -237,14 +246,20 @@ const webSearchTool = defineTool({
 		return new Text(text, 0, 0);
 	},
 
-	renderResult(result, { expanded, isPartial }, theme) {
+	renderResult(result, { expanded, isPartial, isError }, theme) {
 		const details = result.details as WebSearchDetails | undefined;
 
 		if (isPartial) {
 			return new Text(theme.fg("warning", "Searching..."), 0, 0);
 		}
 
-		if (!details || details.outputLines === 0) {
+		if (isError) {
+			const content = result.content[0];
+			const errorText = content?.type === "text" ? content.text : "Search failed";
+			return new Text(theme.fg("warning", errorText), 0, 0);
+		}
+
+		if (!details || !details.outputLines) {
 			return new Text(theme.fg("dim", "No results found"), 0, 0);
 		}
 
