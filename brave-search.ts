@@ -300,15 +300,10 @@ export default function (pi: ExtensionAPI) {
 	pi.registerTool(webSearchTool);
 
 	pi.on("session_start", async (_event, ctx) => {
-		if (isBxAvailable()) {
-			ctx.ui.setStatus("web-search", "Web search ready");
-		} else {
-			ctx.ui.setStatus("web-search", "bx CLI not found");
-			ctx.ui.notify(
-				"Brave Search CLI (bx) not found. Install from: https://brave.com/search/api/",
-				"warning"
-			);
-		}
+		ctx.ui.setStatus(
+			"web-search",
+			isBxAvailable() ? "Web search ready" : "bx CLI not found",
+		);
 	});
 
 	pi.on("tool_call", async (event) => {
