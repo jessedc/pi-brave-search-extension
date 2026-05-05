@@ -133,19 +133,6 @@ Output is truncated to **2000 lines / 50 KB** (whichever hits first) using `pi-c
 
 A `tool_call` hook blocks calls when `bx` is not on `PATH` and surfaces an actionable error to the model.
 
-## 🧪 Testing
-
-```bash
-# Sanity-check bx itself
-which bx
-bx config show-key
-bx "TypeScript documentation" --count 5
-
-# Test inside Pi
-pi
-"Find documentation about async/await"
-```
-
 ## 🆘 Troubleshooting
 
 ### `bx: command not found`
@@ -171,18 +158,12 @@ pi
 
 ### Rate limits
 
-The extension surfaces Brave's rate-limit errors verbatim. If you're hitting them, slow down or check your plan at <https://api-dashboard.search.brave.com>.
-
-### Poor search results
-
-- Be more specific in your query
-- Try a different `type`
-- Increase `count` for more results
-- For `context`, raise `max_tokens` if the extracted page is being cut short
+The extension surfaces Brave's rate-limit errors verbatim. If you're hitting them, check your plan at <https://api-dashboard.search.brave.com>.
 
 ## 🔗 Resources
 
 - [Brave Search API](https://brave.com/search/api/)
+- [Brave Search API Skills](https://github.com/brave/brave-search-skills)
 - [Brave CLI on GitHub](https://github.com/brave/brave-search-cli)
 - [Pi extension docs](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent/docs/extensions.md)
 - [Brave API dashboard](https://api-dashboard.search.brave.com)
