@@ -321,10 +321,9 @@ export default function (pi: ExtensionAPI) {
 	pi.registerTool(webSearchTool);
 
 	pi.on("session_start", async (_event, ctx) => {
-		ctx.ui.setStatus(
-			"web-search",
-			isBxAvailable() ? "Web search ready" : "bx CLI not found",
-		);
+		if (!isBxAvailable()) {
+			ctx.ui.setStatus("web-search", "bx CLI not found");
+		}
 	});
 
 	pi.on("tool_call", async (event) => {
