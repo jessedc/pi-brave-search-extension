@@ -64,7 +64,7 @@ const WebSearchParams = Type.Object({
 interface WebSearchDetails {
 	query: string;
 	searchType: string;
-	resultCount: number;
+	outputLines: number;
 	truncation?: TruncationResult;
 	fullOutputPath?: string;
 }
@@ -109,7 +109,7 @@ async function processOutput(
 	const details: WebSearchDetails = {
 		query,
 		searchType,
-		resultCount: 0,
+		outputLines: 0,
 	};
 
 	if (!output.trim()) {
@@ -120,7 +120,7 @@ async function processOutput(
 	}
 
 	const lines = output.split("\n").filter((line) => line.trim());
-	details.resultCount = lines.length;
+	details.outputLines = lines.length;
 
 	const truncation = truncateMode === "head"
 		? truncateHead(output, { maxLines: DEFAULT_MAX_LINES, maxBytes: DEFAULT_MAX_BYTES })
@@ -218,7 +218,7 @@ const webSearchTool = defineTool({
 			return new Text(theme.fg("warning", "Searching..."), 0, 0);
 		}
 
-		if (!details || details.resultCount === 0) {
+		if (!details || details.outputLines === 0) {
 			return new Text(theme.fg("dim", "No results found"), 0, 0);
 		}
 
@@ -232,7 +232,7 @@ const webSearchTool = defineTool({
 		};
 		const emoji = typeEmoji[details.searchType] || "🔍";
 
-		let text = theme.fg("success", `${emoji} ${details.resultCount} results`);
+		let text = theme.fg("success", `${emoji} ${details.outputLines} lines`);
 
 		if (details.truncation?.truncated) {
 			text += theme.fg("warning", " (truncated)");
