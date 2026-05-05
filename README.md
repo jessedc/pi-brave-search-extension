@@ -5,7 +5,6 @@ A Pi coding-agent extension that exposes a single unified `web_search` tool to t
 ## ✨ Features
 
 - **Single tool** (`web_search`) with multiple search types
-- **AI-grounded answers** with citations
 - **News search** with freshness filters
 - **Image & video search**
 - **Content extraction** for RAG
@@ -71,7 +70,6 @@ The LLM sees one tool: `web_search`.
 | Type | Use Case | Example |
 |------|----------|---------|
 | `web` (default) | General search | Documentation, resources |
-| `answers` | Q&A with citations | "How does X work?" |
 | `news` | Recent articles | "Latest AI news" |
 | `images` | Visual assets | "Architecture diagrams" |
 | `videos` | Video content | "Tutorial videos" |
@@ -82,7 +80,7 @@ The LLM sees one tool: `web_search`.
 ```typescript
 {
   query: string,           // Required: search query
-  type?: "web" | "answers" | "news" | "images" | "videos" | "context",
+  type?: "web" | "news" | "images" | "videos" | "context",
   count?: number,          // 1–20, default: 10
   freshness?: "pd"|"pw"|"pm"|"py",  // type=news only
   max_tokens?: number      // 100–32000, type=context only
@@ -99,12 +97,6 @@ The LLM sees one tool: `web_search`.
 ```
 User: "Find the official React documentation"
 LLM:  web_search({ query: "React documentation" })
-```
-
-**Q&A with citations:**
-```
-User: "How does Rust's borrow checker work?"
-LLM:  web_search({ query: "Rust borrow checker explained", type: "answers" })
 ```
 
 **Recent news:**

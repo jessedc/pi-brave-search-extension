@@ -54,7 +54,6 @@ echo "The LLM will see ONE tool: web_search"
 echo ""
 echo "Usage examples:"
 echo '  "Search for TypeScript docs"        → type="web" (default)'
-echo '  "How does Rust work?"               → type="answers"'
 echo '  "AI news this week"                 → type="news", freshness="pw"'
 echo '  "Find tutorial videos"              → type="videos"'
 echo '  "Extract API documentation"         → type="context"'

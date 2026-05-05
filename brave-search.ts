@@ -36,14 +36,14 @@ const WebSearchParams = Type.Object({
 		description: "Search query - be specific and descriptive for best results" 
 	}),
 	type: StringEnum(
-		["web", "answers", "news", "images", "videos", "context"] as const,
-		{ 
-			description: "Search type: 'web' for general search (default), 'answers' for AI-grounded Q&A, 'news' for recent articles, 'images' for images, 'videos' for videos, 'context' for RAG content extraction",
+		["web", "news", "images", "videos", "context"] as const,
+		{
+			description: "Search type: 'web' for general search (default), 'news' for recent articles, 'images' for images, 'videos' for videos, 'context' for RAG content extraction",
 			default: "web"
 		}
 	),
 	count: Type.Optional(Type.Integer({
-		description: "Number of results (1-20, default: 10, not supported with type='answers')",
+		description: "Number of results (1-20, default: 10)",
 		minimum: 1,
 		maximum: 20
 	})),
@@ -174,10 +174,9 @@ const webSearchTool = defineTool({
 	name: "web_search",
 	label: "Web Search",
 	description:
-		"Search the web via Brave Search. The 'type' parameter selects the search mode: 'web' (default) general results, 'answers' AI-synthesized Q&A with citations, 'news' recent articles (supports 'freshness'), 'images', 'videos', 'context' RAG content extraction (supports 'max_tokens').",
-	promptSnippet: "Brave web search (web | answers | news | images | videos | context)",
+		"Search the web via Brave Search. The 'type' parameter selects the search mode: 'web' (default) general results, 'news' recent articles (supports 'freshness'), 'images', 'videos', 'context' RAG content extraction (supports 'max_tokens').",
+	promptSnippet: "Brave web search (web | news | images | videos | context)",
 	promptGuidelines: [
-		"Use web_search with type='answers' when the user asks a question that wants a synthesized answer with citations",
 		"Use web_search with type='news' and a freshness filter (pd/pw/pm/py) when the user asks about recent or current events",
 		"Use web_search with type='context' to extract detailed page content for research or analysis",
 	],
@@ -202,17 +201,8 @@ const webSearchTool = defineTool({
 				`'max_tokens' is only valid with type='context', not type='${type}'. Drop the max_tokens parameter or set type='context'.`,
 			);
 		}
-		if (count !== undefined && type === "answers") {
-			throw new Error(
-				`'count' is not supported with type='answers'. Drop the count parameter or use a different type.`,
-			);
-		}
 
-		const args: string[] = [type, query];
-
-		if (type !== "answers") {
-			args.push("--count", (count ?? 10).toString());
-		}
+		const args: string[] = [type, query, "--count", (count ?? 10).toString()];
 
 		if (freshness) {
 			args.push("--freshness", freshness);
@@ -265,7 +255,6 @@ const webSearchTool = defineTool({
 
 		const typeEmoji: Record<string, string> = {
 			web: "🔍",
-			answers: "💡",
 			news: "📰",
 			images: "📷",
 			videos: "🎥",
