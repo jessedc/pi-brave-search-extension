@@ -168,22 +168,32 @@ const webSearchTool = defineTool({
 	parameters: WebSearchParams,
 
 	async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-		const { 
-			query, 
-			type = "web", 
-			count = 10, 
+		const {
+			query,
+			type = "web",
+			count = 10,
 			freshness,
-			max_tokens 
+			max_tokens,
 		} = params;
 
-		// Build bx command based on search type
+		if (freshness !== undefined && type !== "news") {
+			throw new Error(
+				`'freshness' is only valid with type='news', not type='${type}'. Drop the freshness parameter or set type='news'.`,
+			);
+		}
+		if (max_tokens !== undefined && type !== "context") {
+			throw new Error(
+				`'max_tokens' is only valid with type='context', not type='${type}'. Drop the max_tokens parameter or set type='context'.`,
+			);
+		}
+
 		const args: string[] = [type, query, "--count", count.toString()];
-		
-		if (type === "news" && freshness) {
+
+		if (freshness) {
 			args.push("--freshness", freshness);
 		}
-		
-		if (type === "context" && max_tokens) {
+
+		if (max_tokens) {
 			args.push("--max-tokens", max_tokens.toString());
 		}
 
