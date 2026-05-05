@@ -262,16 +262,27 @@ const webSearchTool = defineTool({
 // Extension Entry Point
 // ============================================================================
 
-export default function (pi: ExtensionAPI) {
-	// Register the single web search tool
-	pi.registerTool(webSearchTool);
+let bxAvailable: boolean | undefined;
 
-	// Status on session start
-	pi.on("session_start", async (_event, ctx) => {
+function isBxAvailable(): boolean {
+	if (bxAvailable === undefined) {
 		try {
 			execFileSync("which", ["bx"], { stdio: "ignore" });
-			ctx.ui.setStatus("web-search", "Web search ready");
+			bxAvailable = true;
 		} catch {
+			bxAvailable = false;
+		}
+	}
+	return bxAvailable;
+}
+
+export default function (pi: ExtensionAPI) {
+	pi.registerTool(webSearchTool);
+
+	pi.on("session_start", async (_event, ctx) => {
+		if (isBxAvailable()) {
+			ctx.ui.setStatus("web-search", "Web search ready");
+		} else {
 			ctx.ui.setStatus("web-search", "bx CLI not found");
 			ctx.ui.notify(
 				"Brave Search CLI (bx) not found. Install from: https://brave.com/search/api/",
@@ -280,17 +291,12 @@ export default function (pi: ExtensionAPI) {
 		}
 	});
 
-	// Validate bx availability before tool execution
 	pi.on("tool_call", async (event) => {
-		if (event.toolName === "web_search") {
-			try {
-				execFileSync("which", ["bx"], { stdio: "ignore" });
-			} catch {
-				return {
-					block: true,
-					reason: "Brave Search CLI (bx) not found. Install from https://brave.com/search/api/",
-				};
-			}
+		if (event.toolName === "web_search" && !isBxAvailable()) {
+			return {
+				block: true,
+				reason: "Brave Search CLI (bx) not found. Install from https://brave.com/search/api/",
+			};
 		}
 	});
 }
